@@ -79,8 +79,8 @@
   thead th.tt{background:var(--azul-claro)}
   tbody td{padding:7.5px 8px;font-size:12px;border:1px solid var(--cinza);text-align:right;white-space:nowrap}
   tbody td.obra{text-align:left;font-weight:600;color:var(--azul-escuro)}
-  td.pct{background:var(--cel);border-color:var(--cel-borda)}
-  td.pct.z{background:#fff;color:#c4c4d0}
+  td.pct{background:var(--cel);border-color:var(--cel-borda);text-align:center}
+  td.pct.z{background:#fff;color:#c4c4d0;text-align:center}
   td.val{font-weight:700}
   td.shr{font-weight:700;color:var(--azul-claro);background:rgba(79,72,236,.05)}
   tbody tr:nth-child(even) td.obra{background:var(--cinza-2)}
@@ -132,11 +132,12 @@
     border-bottom:1px solid var(--cinza);
   }
   .login-icone{
-    width:40px;height:40px;border-radius:11px;
+    width:46px;height:46px;border-radius:11px;
     background:var(--azul-escuro);
     display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    overflow:hidden;padding:4px;
   }
-  .login-icone svg{width:22px;height:22px;fill:#fff}
+  .login-icone img{height:36px;width:auto;display:block}
   .login-marca .k{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--suave);font-weight:600}
   .login-marca .e{font-family:'Bricolage Grotesque';font-weight:800;font-size:17px;color:var(--azul-escuro)}
   .login-titulo{font-family:'Bricolage Grotesque';font-weight:800;font-size:27px;
@@ -169,6 +170,15 @@
   }
   .login-btn:hover{background:#3d36d4;box-shadow:0 6px 18px rgba(79,72,236,.45)}
   .login-btn:active{transform:scale(.98)}
+  .senha-wrap{position:relative}
+  .senha-wrap .login-input{padding-right:44px}
+  #btn-olho{
+    position:absolute;right:12px;top:50%;transform:translateY(-50%);
+    background:none;border:none;cursor:pointer;padding:4px;
+    color:#b5b3cc;transition:color .15s;line-height:0;
+  }
+  #btn-olho:hover{color:var(--azul-claro)}
+  #btn-olho svg{width:18px;height:18px;display:block}
 
   /* Botão sair */
   #btn-sair{
@@ -189,9 +199,7 @@
     <div class="login-faixa"></div>
     <div class="login-marca">
       <div class="login-icone">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2a5 5 0 1 1 0 10A5 5 0 0 1 12 2zm0 12c5.33 0 8 2.67 8 4v2H4v-2c0-1.33 2.67-4 8-4z"/>
-        </svg>
+        <img id="l-logo" alt="Logo">
       </div>
       <div>
         <div class="k">Rateio ADM</div>
@@ -209,9 +217,16 @@
       </div>
       <div class="login-campo">
         <label for="l-senha">Senha</label>
-        <input class="login-input" id="l-senha" type="password"
-          placeholder="••••••••••"
-          autocomplete="current-password">
+        <div class="senha-wrap">
+          <input class="login-input" id="l-senha" type="password"
+            placeholder="••••••••••"
+            autocomplete="current-password">
+          <button type="button" id="btn-olho" onclick="toggleSenha()" tabindex="-1" aria-label="Mostrar senha">
+            <svg id="ico-olho" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
       </div>
       <div id="l-erro" class="login-erro" role="alert"></div>
       <button type="submit" class="login-btn">Entrar</button>
@@ -263,7 +278,21 @@
     document.getElementById('l-erro').textContent = '';
   }
 
+  function toggleSenha() {
+    var input = document.getElementById('l-senha');
+    var svg = document.getElementById('ico-olho');
+    var mostrar = input.type === 'password';
+    input.type = mostrar ? 'text' : 'password';
+    svg.innerHTML = mostrar
+      ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+      : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
+    var headerLogo = document.querySelector('#app .logo');
+    var loginLogo  = document.getElementById('l-logo');
+    if (headerLogo && loginLogo) loginLogo.src = headerLogo.src;
+
     if (_ok()) { mostrarApp(); return; }
 
     document.getElementById('login-form').addEventListener('submit', function (e) {
